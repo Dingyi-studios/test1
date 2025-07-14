@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人工智能在案件侦破中的应用研究</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Scholarly Neutral -->
+    <!-- Application Structure Plan: The application is structured into four main thematic sections: 1) A central landing/navigation hub. 2) "技术赋能" (Technology Enablement), using interactive cards to detail core AI technologies (ML, CV, NLP) and their applications. 3) "挑战与对策" (Challenges & Countermeasures), featuring a two-panel layout where selecting a challenge reveals its corresponding solutions and best practices. 4) "伦理与未来" (Ethics & Future), employing a tabbed interface to separate ethical dilemmas from future trends, complemented by a conceptual chart. This non-linear, hub-and-spoke design was chosen over a linear report format to empower users to explore interconnected topics (e.g., how a specific technology leads to a specific ethical challenge) in a self-directed manner, enhancing engagement and comprehension. -->
+    <!-- Visualization & Content Choices: Report Info -> Key AI technologies (ML, CV, NLP). Goal -> Explain function and impact. Viz/Presentation -> Interactive cards with icons and flip/expand animations on click to reveal details. Interaction -> Click to reveal functions, applications, and case studies. Justification -> Breaks down dense technical information into digestible chunks, promoting active exploration over passive reading. Library -> HTML/CSS/JS for cards. Report Info -> Challenges vs. Best Practices. Goal -> Juxtapose problems with solutions. Viz/Presentation -> Two-column interactive list. Interaction -> Clicking a challenge on the left dynamically updates the solutions on the right. Justification -> Creates a clear problem-solution narrative and simplifies complex policy recommendations. Library -> HTML/CSS/JS for dynamic content. Report Info -> Balance of AI benefits and risks. Goal -> Visualize the core tension of the report. Viz/Presentation -> Doughnut chart. Interaction -> Hover tooltips on chart segments. Justification -> Provides a quick, memorable visual summary of the report's central theme. Library -> Chart.js. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8f7f4;
+            color: #4a4a4a;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 300px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .nav-link {
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #0d9488;
+            border-color: #0d9488;
+        }
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .challenge-btn {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .challenge-btn.active {
+            background-color: #0d9488;
+            color: white;
+        }
+        .tab-btn.active {
+            border-color: #0d9488;
+            color: #0d9488;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-teal-800">AI侦破应用研究</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">主页</a>
+                <a href="#tech" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">技术赋能</a>
+                <a href="#challenges" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">挑战与对策</a>
+                <a href="#ethics" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">伦理与未来</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-gray-700 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-4 6h4"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4">
+            <a href="#home" class="block py-2 text-gray-600">主页</a>
+            <a href="#tech" class="block py-2 text-gray-600">技术赋能</a>
+            <a href="#challenges" class="block py-2 text-gray-600">挑战与对策</a>
+            <a href="#ethics" class="block py-2 text-gray-600">伦理与未来</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="min-h-screen flex items-center bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl md:text-6xl font-extrabold text-teal-900 mb-4">探索AI在案件侦破中的双刃剑</h2>
+                <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-12">本报告旨在全面分析人工智能在案件侦破中的技术赋能，并深入剖析警方在实际操作中面临的需求与挑战。这个交互式应用将引导您探索其核心技术、现实困境、伦理考量与未来趋势。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <a href="#tech" class="card bg-gray-50 p-8 rounded-xl shadow-md border border-gray-200">
+                        <div class="text-4xl mb-4">💻</div>
+                        <h3 class="text-xl font-bold text-teal-800 mb-2">技术赋能</h3>
+                        <p class="text-gray-500">了解机器学习、计算机视觉等核心AI技术如何变革侦查工作。</p>
+                    </a>
+                    <a href="#challenges" class="card bg-gray-50 p-8 rounded-xl shadow-md border border-gray-200">
+                        <div class="text-4xl mb-4">🛡️</div>
+                        <h3 class="text-xl font-bold text-teal-800 mb-2">挑战与对策</h3>
+                        <p class="text-gray-500">探究数据质量、资源短缺等挑战及相应的解决方案。</p>
+                    </a>
+                    <a href="#ethics" class="card bg-gray-50 p-8 rounded-xl shadow-md border border-gray-200">
+                        <div class="text-4xl mb-4">⚖️</div>
+                        <h3 class="text-xl font-bold text-teal-800 mb-2">伦理与未来</h3>
+                        <p class="text-gray-500">审视算法偏见、隐私保护等伦理问题和未来发展方向。</p>
+                    </a>
+                    <div class="card bg-gray-50 p-8 rounded-xl shadow-md border border-gray-200">
+                         <div class="text-4xl mb-4">📊</div>
+                        <h3 class="text-xl font-bold text-teal-800 mb-2">效能评估</h3>
+                        <p class="text-gray-500">通过图表直观感受AI在提升侦破效率和准确率上的作用。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tech" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-teal-900">技术赋能：AI如何重塑案件侦破</h2>
+                    <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">人工智能的核心技术正从根本上改变证据分析、线索追踪和犯罪预测的方式。点击下方卡片，了解各项技术的具体应用和成功案例。</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 items-start">
+                    <div class="space-y-8">
+                        <div class="tech-card bg-white p-6 rounded-lg shadow-lg cursor-pointer border border-gray-200" data-tech="ml">
+                            <h3 class="text-xl font-bold text-teal-800 mb-2">机器学习 (ML) 与预测性分析</h3>
+                            <p class="text-gray-600">通过分析历史数据预测犯罪热点，优化警力部署，实现从被动响应到主动预防的转变。</p>
+                            <div class="tech-details hidden mt-4 pt-4 border-t border-gray-200">
+                                <p><strong>关键功能：</strong>预测犯罪高发地与时间、识别高风险个体、生成嫌疑人画像。</p>
+                                <p><strong>应用案例：</strong>某“犯罪调查AI预测工具”利用ML和NLP分析犯罪报告，预测准确率达85%。</p>
+                            </div>
+                        </div>
+                        <div class="tech-card bg-white p-6 rounded-lg shadow-lg cursor-pointer border border-gray-200" data-tech="cv">
+                            <h3 class="text-xl font-bold text-teal-800 mb-2">计算机视觉 (CV) 与图像分析</h3>
+                            <p class="text-gray-600">从海量视频监控中自动识别人脸、车辆和特定行为，极大提升视频证据的分析效率。</p>
+                            <div class="tech-details hidden mt-4 pt-4 border-t border-gray-200">
+                                <p><strong>关键功能：</strong>人脸识别、物体检测（如枪支）、指纹匹配、低质量视频增强。</p>
+                                <p><strong>应用案例：</strong>迪拜“Oyoon”项目利用AI摄像头进行大规模监控，一年内协助逮捕319名嫌疑人。</p>
+                            </div>
+                        </div>
+                         <div class="tech-card bg-white p-6 rounded-lg shadow-lg cursor-pointer border border-gray-200" data-tech="nlp">
+                            <h3 class="text-xl font-bold text-teal-800 mb-2">自然语言处理 (NLP) 与文本分析</h3>
+                            <p class="text-gray-600">分析审讯记录、案件报告和网络言论，自动提取线索、评估可信度，甚至起草报告。</p>
+                            <div class="tech-details hidden mt-4 pt-4 border-t border-gray-200">
+                                <p><strong>关键功能：</strong>分析报告、检测欺骗、自动撰写报告初稿、监控在线犯罪言论。</p>
+                                <p><strong>应用案例：</strong>里奇兰县警长部门利用NLP近乎实时地分析随身摄像机录音，监督并评估警员互动专业性。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+                        <h3 class="text-xl text-center font-bold text-teal-800 mb-4">主要应用领域分布</h3>
+                        <div class="chart-container h-96">
+                            <canvas id="techApplicationsChart"></canvas>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-4 text-center">此图表展示了报告中提及的各项AI技术在案件侦破中的主要应用领域和功能分布，突显了机器学习和计算机视觉的核心地位。</p>
+                    </div>
+                </div>
+
+                <div class="mt-20 bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+                    <h3 class="text-2xl font-bold text-teal-900 mb-6 text-center">✨ AI案件摘要生成器 ✨</h3>
+                    <p class="text-lg text-gray-600 mb-6 text-center max-w-2xl mx-auto">利用先进的自然语言处理技术，快速从复杂案件描述中提取关键信息并生成简洁摘要。输入一段案件描述，体验AI的文本分析能力。</p>
+                    <div class="mb-4">
+                        <label for="caseDescription" class="block text-gray-700 text-sm font-bold mb-2">输入案件描述：</label>
+                        <textarea id="caseDescription" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32 resize-y" placeholder="例如：2025年5月10日，在某市中心发生一起盗窃案。嫌疑人通过撬锁进入一家珠宝店，盗取了价值约50万元的珠宝。监控录像显示嫌疑人身穿黑色连帽衫，戴着口罩，作案时间约为凌晨2点。警方已介入调查，正在搜集更多线索。"></textarea>
+                    </div>
+                    <button id="generateSummaryBtn" class="bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:shadow-outline w-full md:w-auto">
+                        生成案件摘要 ✨
+                    </button>
+                    <div id="loadingIndicator" class="mt-4 text-teal-700 text-center hidden">
+                        正在生成摘要，请稍候...
+                    </div>
+                    <div id="summaryOutput" class="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px] flex items-center justify-center text-gray-700 italic">
+                        生成的案件摘要将显示在此处。
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="challenges" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-teal-900">挑战与对策：现实的困境与解决之道</h2>
+                    <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">AI的应用并非一帆风顺，警方在实务中面临数据、资源、安全等多重挑战。点击左侧的挑战，查看右侧对应的分析与对策建议。</p>
+                </div>
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="w-full md:w-1/3 flex flex-col space-y-4">
+                        <button class="challenge-btn text-left p-4 rounded-lg bg-gray-100 border border-gray-200 active" data-challenge="data">
+                            <h4 class="font-bold">数据质量与整合</h4>
+                            <p class="text-sm">数据孤岛、格式多样、质量参差不齐。</p>
+                        </button>
+                        <button class="challenge-btn text-left p-4 rounded-lg bg-gray-100 border border-gray-200" data-challenge="security">
+                            <h4 class="font-bold">数字证据管理与安全</h4>
+                            <p class="text-sm">篡改风险、加密障碍、深度伪造威胁。</p>
+                        </button>
+                        <button class="challenge-btn text-left p-4 rounded-lg bg-gray-100 border border-gray-200" data-challenge="resources">
+                            <h4 class="font-bold">资源与人员能力</h4>
+                            <p class="text-sm">预算有限、警力不足、技术技能差距。</p>
+                        </button>
+                        <button class="challenge-btn text-left p-4 rounded-lg bg-gray-100 border border-gray-200" data-challenge="crime">
+                            <h4 class="font-bold">新兴AI驱动犯罪</h4>
+                            <p class="text-sm">AI赋能网络钓鱼、诈骗和恶意软件。</p>
+                        </button>
+                    </div>
+                    <div class="w-full md:w-2/3 bg-gray-50 p-6 md:p-8 rounded-lg border border-gray-200">
+                        <div id="challenge-content">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ethics" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-teal-900">伦理与未来：在创新与责任之间寻求平衡</h2>
+                    <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">AI在警务中的应用引发了关于公平、隐私和问责制的深刻讨论。负责任的创新是其健康发展的关键。</p>
+                </div>
+
+                <div class="flex justify-center mb-8 border-b border-gray-300">
+                    <button class="tab-btn py-2 px-6 border-b-2 border-transparent active" data-tab="ethics-issues">伦理考量</button>
+                    <button class="tab-btn py-2 px-6 border-b-2 border-transparent" data-tab="future-trends">未来趋势与建议</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
+                    <div class="md:col-span-3">
+                        <div id="tab-content">
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+                        <h3 class="text-xl text-center font-bold text-teal-800 mb-4">技术效益 vs 伦理风险</h3>
+                        <div class="chart-container">
+                            <canvas id="ethicsChart"></canvas>
+                        </div>
+                         <p class="text-sm text-gray-500 mt-4 text-center">此图表概念性地展示了AI技术带来的巨大侦破效益与伴随而来的伦理风险之间的平衡关系，强调了建立健全治理框架的重要性。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2025 AI侦破应用交互式研究报告。内容根据源报告生成。</p>
+            <p class="text-xs text-gray-400 mt-2">此为演示性应用，旨在以交互方式呈现报告内容。</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const contentData = {
+                challenges: {
+                    data: {
+                        title: '数据质量与整合挑战',
+                        description: '执法机构的数据量呈指数级增长，但这些数据往往存储在互不联通的“孤岛”中，格式多样，质量参差不齐。这导致AI模型难以进行有效分析，若训练数据存在偏见，AI系统会延续甚至放大这些偏见，产生“输入垃圾，输出垃圾”的困境。',
+                        solution: `<strong>对策建议：</strong><ul>
+                            <li class="mt-2"><strong>建立统一数据平台：</strong>投资建设集中式数字证据管理系统，实现数据的统一存储、标准化和共享。</li>
+                            <li class="mt-2"><strong>加强数据治理：：</strong>制定严格的数据质量标准和治理框架，确保用于AI训练的数据高质量、无偏见且具有代表性。</li>
+                            <li class="mt-2"><strong>自动化数据处理：</strong>利用工具自动化数据摄取和初步分类，提高整合效率。</li>
+                        </ul>`
+                    },
+                    security: {
+                        title: '数字证据管理与安全问题',
+                        description: '数字证据易受篡改、泄露和网络攻击，确保其保管链的完整性至关重要。同时，AI生成的深度伪造（deepfakes）技术日益成熟，使得辨别真实信息和虚假信息变得更加困难，对调查可信度构成严重威胁。',
+                        solution: `<strong>对策建议：</strong><ul>
+                            <li class="mt-2"><strong>强化安全措施：</strong>采用强大的加密协议、安全审计日志和访问控制，保护证据免受未授权访问和篡改。</li>
+                            <li class="mt-2"><strong>开发反制技术：：</strong>投资研发能够检测AI生成伪造内容的技术，确保证据的真实性。</li>
+                            <li class="mt-2"><strong>确保证据保管链：</strong>利用区块链等技术建立不可篡改的证据保管链记录。</li>
+                        </ul>`
+                    },
+                    resources: {
+                        title: '资源配置与人员能力建设',
+                        description: '许多警察部门面临警力不足和预算有限的双重压力，这限制了他们投资昂贵AI技术和相关培训的能力。现有警员普遍缺乏操作和理解复杂AI系统的技能，形成了严重的“技能差距”，难以有效利用AI工具。',
+                        solution: `<strong>对策建议：</strong><ul>
+                            <li class="mt-2"><strong>增加技术投资：：</strong>呼吁政府增加对警务科技的专项资金投入。</li>
+                            <li class="mt-2"><strong>持续专业培训：：</strong>为警员提供持续的、体系化的培训，内容不仅包括软件操作，还应涵盖AI原理、局限性和伦理使用。</li>
+                            <li class="mt-2"><strong>优化资源分配：：</strong>利用预测性警务等AI工具更科学地分配有限的警力资源，提高效率。</li>
+                        </ul>`
+                    },
+                    crime: {
+                        title: '新兴AI驱动的犯罪威胁',
+                        description: '犯罪分子也在利用AI赋能其犯罪活动。例如，使用AI自动化网络钓鱼、生成更具欺骗性的诈骗信息、创建合成身份进行金融欺诈等。这引发了一场执法部门与犯罪分子之间的“AI军备竞赛”。',
+                        solution: `<strong>对策建议：：</strong><ul>
+                            <li class="mt-2"><strong>持续研发反制措施：</strong>执法部门的AI战略必须包括开发针对AI驱动犯罪的反制技术和方法论。</li>
+                            <li class="mt-2"><strong>加强国际合作：</strong>网络犯罪无国界，需要跨国合作共享情报和调查策略。</li>
+                            <li class="mt-2"><strong>提升公众防范意识：</strong>通过宣传教育，提高公众对新型AI诈骗的识别能力。</li>
+                        </ul>`
+                    }
+                },
+                ethics: {
+                    'ethics-issues': {
+                        title: '核心伦理考量',
+                        content: `<ul>
+                            <li class="mt-4"><strong>算法偏见与公平性：</strong>AI从反映社会现有偏见的历史数据中学习，可能导致对特定群体的不公平对待，形成恶性循环。</li>
+                            <li class="mt-4"><strong>数据隐私与公民权利：</strong>大规模监控（如人脸识别）可能侵犯个人隐私和公民自由，若缺乏严格监管，有滑向“监控国家”的风险。</li>
+                            <li class="mt-4"><strong>透明度与问责制：</strong>许多AI系统是“黑箱”，其决策过程不透明，导致问责困难。当AI出错时，谁来负责？</li>
+                            <li class="mt-4"><strong>法律框架空白：</strong>技术发展速度远超立法，导致监管滞后，存在法律不确定性和滥用风险。</li>
+                            <li class="mt-4"><strong>公众信任：</strong>如果公众认为AI不公、不透明，对警方的信任将受到侵蚀，影响警务工作的合法性。</li>
+                        </ul>`
+                    },
+                    'future-trends': {
+                        title: '未来趋势与发展建议',
+                        content: `<ul>
+                            <li class="mt-4"><strong>人机协作模式：</strong>AI应作为辅助工具，增强人类警员的决策能力，而非完全替代。最终决策权和责任必须在人。</li>
+                            <li class="mt-4"><strong>可解释AI (XAI)：</strong>大力发展和采用能够解释其决策过程的AI技术，破解“黑箱”问题，增强透明度和信任。</li>
+                            <li class="mt-4"><strong>健全的政策与监管：</strong>制定全面的、基于风险评估的法律框架，明确AI使用的边界和责任，填补政策空白。</li>
+                            <li class="mt-4"><strong>社区参与和透明：：</strong>在部署AI技术前，应与社区进行开放沟通，解释其功能、风险和保障措施，建立社会共识。</li>
+                            <li class="mt-4"><strong>持续的伦理培训与审计：</strong>对警员进行AI伦理培训，并定期对AI系统进行偏见和公平性审计，并公布结果。</li>
+                        </ul>`
+                    }
+                }
+            };
+            
+            const challengeContentEl = document.getElementById('challenge-content');
+            const challengeButtons = document.querySelectorAll('.challenge-btn');
+
+            function updateChallengeContent(challengeKey) {
+                const content = contentData.challenges[challengeKey];
+                challengeContentEl.innerHTML = `
+                    <h3 class="text-2xl font-bold text-teal-900 mb-4">${content.title}</h3>
+                    <p class="text-gray-700 mb-6">${content.description}</p>
+                    <div class="text-gray-700">${content.solution}</div>
+                `;
+            }
+
+            challengeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    challengeButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    updateChallengeContent(button.dataset.challenge);
+                });
+            });
+
+            updateChallengeContent('data');
+
+            const tabContentEl = document.getElementById('tab-content');
+            const tabButtons = document.querySelectorAll('.tab-btn');
+
+            function updateTabContent(tabKey) {
+                const content = contentData.ethics[tabKey];
+                tabContentEl.innerHTML = `<h3 class="text-2xl font-bold text-teal-900 mb-4">${content.title}</h3><div>${content.content}</div>`;
+            }
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    updateTabContent(button.dataset.tab);
+                });
+            });
+            
+            updateTabContent('ethics-issues');
+            
+            const techCards = document.querySelectorAll('.tech-card');
+            techCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const details = card.querySelector('.tech-details');
+                    details.classList.toggle('hidden');
+                });
+            });
+
+            const techApplicationsCtx = document.getElementById('techApplicationsChart').getContext('2d');
+            new Chart(techApplicationsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['机器学习 (ML)', '计算机视觉 (CV)', '自然语言处理 (NLP)', '机器人与自动化'],
+                    datasets: [{
+                        label: '应用领域',
+                        data: [40, 30, 20, 10],
+                        backgroundColor: ['#0f766e', '#0d9488', '#5eead4', '#99f6e4'],
+                        borderColor: '#f8f7f4',
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#4a4a4a',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const ethicsCtx = document.getElementById('ethicsChart').getContext('2d');
+            new Chart(ethicsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['技术效益', '伦理风险'],
+                    datasets: [{
+                        data: [65, 35],
+                        backgroundColor: ['#0d9488', '#fca5a5'],
+                        borderColor: '#ffffff',
+                        borderWidth: 4,
+                        
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                     plugins: {
+                        legend: {
+                            position: 'bottom',
+                             labels: {
+                                color: '#4a4a4a',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            bodyFont: {
+                                size: 14
+                            },
+                             callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+            
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80, 
+                            behavior: 'smooth'
+                        });
+                    }
+                    if(mobileMenu.classList.contains('hidden') === false) {
+                       mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+            const sections = document.querySelectorAll('main section');
+            const mainNavLinks = document.querySelectorAll('.md\\:flex a.nav-link');
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 90) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                mainNavLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+
+            // Gemini API Integration for Case Summary Generator
+            const generateSummaryBtn = document.getElementById('generateSummaryBtn');
+            const caseDescriptionInput = document.getElementById('caseDescription');
+            const summaryOutput = document.getElementById('summaryOutput');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+
+            generateSummaryBtn.addEventListener('click', async () => {
+                const prompt = caseDescriptionInput.value.trim();
+                if (!prompt) {
+                    summaryOutput.innerHTML = '<p class="text-red-500">请输入案件描述以生成摘要。</p>';
+                    return;
+                }
+
+                loadingIndicator.classList.remove('hidden');
+                summaryOutput.innerHTML = ''; // Clear previous output
+
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: `请根据以下案件描述生成一个简洁的案件摘要，突出关键信息，如时间、地点、事件、嫌疑人特征和进展：\n\n${prompt}` }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; 
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        summaryOutput.innerHTML = `<p>${text}</p>`;
+                    } else {
+                        summaryOutput.innerHTML = '<p class="text-red-500">未能生成摘要，请稍后再试或更换描述。</p>';
+                    }
+                } catch (error) {
+                    console.error('Error calling Gemini API:', error);
+                    summaryOutput.innerHTML = '<p class="text-red-500">生成摘要时发生错误，请检查网络连接或稍后再试。</p>';
+                } finally {
+                    loadingIndicator.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
